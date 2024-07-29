@@ -1,4 +1,5 @@
 import 'package:banana_challenge/models/products_model.dart';
+import 'package:banana_challenge/pages/product_detail_page.dart';
 import 'package:banana_challenge/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     productService = Provider.of<ProductService>(context, listen: false);
     _loadProducts();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    productService.dispose();
+    super.dispose();
   }
 
   void _loadProducts() async {
@@ -52,59 +59,69 @@ class Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 160,
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              offset: const Offset(0, 5),
-              blurRadius: 5,
-            )
-          ]),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Text(
-                      product.title ?? '',
-                      overflow: TextOverflow.clip,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ProductPage(
+                      prodId: product.id ?? 1,
+                    )));
+      },
+      child: Container(
+        height: 160,
+        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                offset: const Offset(0, 5),
+                blurRadius: 5,
+              )
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        product.title ?? '',
+                        overflow: TextOverflow.clip,
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  Text(
-                    product.brand ?? '',
-                    style: TextStyle(color: Colors.grey[400]),
-                  )
-                ],
-              ),
-              Container(
-                child: Text(
-                  'USD ${product.price}',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                    Text(
+                      product.brand ?? '',
+                      style: TextStyle(color: Colors.grey[400]),
+                    )
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Text(product.description ?? '',
-              overflow: TextOverflow.ellipsis, maxLines: 2),
-          Text('Stock: ${product.stock}'),
-        ],
+                Container(
+                  child: Text(
+                    'USD ${product.price}',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            Text(product.description ?? '',
+                overflow: TextOverflow.ellipsis, maxLines: 2),
+            Text('Stock: ${product.stock}'),
+          ],
+        ),
       ),
     );
   }

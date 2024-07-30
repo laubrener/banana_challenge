@@ -42,7 +42,7 @@ class Product {
   final int? id;
   final String? title;
   final String? description;
-  final Category? category;
+  final String? category;
   final double? price;
   final double? discountPercentage;
   final double? rating;
@@ -54,9 +54,9 @@ class Product {
   final Dimensions? dimensions;
   final String? warrantyInformation;
   final String? shippingInformation;
-  final AvailabilityStatus? availabilityStatus;
+  final String? availabilityStatus;
   final List<Review>? reviews;
-  final ReturnPolicy? returnPolicy;
+  final String? returnPolicy;
   final int? minimumOrderQuantity;
   final Meta? meta;
   final List<String>? images;
@@ -95,7 +95,7 @@ class Product {
         id: json["id"],
         title: json["title"],
         description: json["description"],
-        category: categoryValues.map[json["category"]]!,
+        category: json["category"],
         price: json["price"]?.toDouble(),
         discountPercentage: json["discountPercentage"]?.toDouble(),
         rating: json["rating"]?.toDouble(),
@@ -111,13 +111,12 @@ class Product {
             : Dimensions.fromJson(json["dimensions"]),
         warrantyInformation: json["warrantyInformation"],
         shippingInformation: json["shippingInformation"],
-        availabilityStatus:
-            availabilityStatusValues.map[json["availabilityStatus"]]!,
+        availabilityStatus: json["availabilityStatus"],
         reviews: json["reviews"] == null
             ? []
             : List<Review>.from(
                 json["reviews"]!.map((x) => Review.fromJson(x))),
-        returnPolicy: returnPolicyValues.map[json["returnPolicy"]]!,
+        returnPolicy: json["returnPolicy"],
         minimumOrderQuantity: json["minimumOrderQuantity"],
         meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
         images: json["images"] == null
@@ -130,7 +129,7 @@ class Product {
         "id": id,
         "title": title,
         "description": description,
-        "category": categoryValues.reverse[category],
+        "category": category,
         "price": price,
         "discountPercentage": discountPercentage,
         "rating": rating,
@@ -142,12 +141,11 @@ class Product {
         "dimensions": dimensions?.toJson(),
         "warrantyInformation": warrantyInformation,
         "shippingInformation": shippingInformation,
-        "availabilityStatus":
-            availabilityStatusValues.reverse[availabilityStatus],
+        "availabilityStatus": availabilityStatus,
         "reviews": reviews == null
             ? []
             : List<dynamic>.from(reviews!.map((x) => x.toJson())),
-        "returnPolicy": returnPolicyValues.reverse[returnPolicy],
+        "returnPolicy": returnPolicy,
         "minimumOrderQuantity": minimumOrderQuantity,
         "meta": meta?.toJson(),
         "images":
@@ -155,22 +153,6 @@ class Product {
         "thumbnail": thumbnail,
       };
 }
-
-enum AvailabilityStatus { IN_STOCK, LOW_STOCK }
-
-final availabilityStatusValues = EnumValues({
-  "In Stock": AvailabilityStatus.IN_STOCK,
-  "Low Stock": AvailabilityStatus.LOW_STOCK
-});
-
-enum Category { BEAUTY, FRAGRANCES, FURNITURE, GROCERIES }
-
-final categoryValues = EnumValues({
-  "beauty": Category.BEAUTY,
-  "fragrances": Category.FRAGRANCES,
-  "furniture": Category.FURNITURE,
-  "groceries": Category.GROCERIES
-});
 
 class Dimensions {
   final double? width;
@@ -236,22 +218,6 @@ class Meta {
         "qrCode": qrCode,
       };
 }
-
-enum ReturnPolicy {
-  NO_RETURN_POLICY,
-  THE_30_DAYS_RETURN_POLICY,
-  THE_60_DAYS_RETURN_POLICY,
-  THE_7_DAYS_RETURN_POLICY,
-  THE_90_DAYS_RETURN_POLICY
-}
-
-final returnPolicyValues = EnumValues({
-  "No return policy": ReturnPolicy.NO_RETURN_POLICY,
-  "30 days return policy": ReturnPolicy.THE_30_DAYS_RETURN_POLICY,
-  "60 days return policy": ReturnPolicy.THE_60_DAYS_RETURN_POLICY,
-  "7 days return policy": ReturnPolicy.THE_7_DAYS_RETURN_POLICY,
-  "90 days return policy": ReturnPolicy.THE_90_DAYS_RETURN_POLICY
-});
 
 class Review {
   final int? rating;

@@ -77,8 +77,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
               constraints: const BoxConstraints(maxHeight: 60),
               backgroundColor: const MaterialStatePropertyAll(Colors.white),
-              textStyle: const MaterialStatePropertyAll(
-                  TextStyle(color: Colors.black)),
+              textStyle:
+                  const MaterialStatePropertyAll(TextStyle(color: Colors.grey)),
               onChanged: (value) => print(value),
               onTap: () {
                 print('ontap: ${searchCtrl.text}');
@@ -130,7 +130,6 @@ class Card extends StatelessWidget {
                     )));
       },
       child: Container(
-        height: 160,
         padding: const EdgeInsets.all(20),
         margin: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -138,7 +137,7 @@ class Card extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withOpacity(0.1),
                 offset: const Offset(0, 5),
                 blurRadius: 5,
               )
@@ -163,6 +162,7 @@ class Card extends StatelessWidget {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
+                    const SizedBox(height: 5),
                     Text(
                       product.brand ?? '',
                       style: TextStyle(color: Colors.grey[400]),
@@ -178,9 +178,15 @@ class Card extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
             Text(product.description ?? '',
                 overflow: TextOverflow.ellipsis, maxLines: 2),
-            Text('Stock: ${product.stock}'),
+            const SizedBox(height: 10),
+            Text(
+              'Stock: ${product.stock}',
+              style: TextStyle(
+                  color: (product.stock ?? 0) < 10 ? Colors.red : Colors.black),
+            ),
           ],
         ),
       ),

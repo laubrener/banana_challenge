@@ -1,3 +1,4 @@
+import 'package:banana_challenge/models/login_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:banana_challenge/pages/product_detail_page.dart';
@@ -5,7 +6,8 @@ import 'package:banana_challenge/models/products_model.dart';
 import 'package:banana_challenge/services/product_service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final User user;
+  const HomePage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -36,7 +38,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     await productService.getProducts();
     products = productService.productsList;
     query = '';
-    isEmpty = false;
+    // isEmpty = false;
+    productService.noResp = false;
     setState(() {});
   }
 
@@ -46,6 +49,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         title: const Text('Flutter Challenge 2024'),
         centerTitle: true,
+        actions: [
+          CircleAvatar(
+            backgroundColor: Color(0xff7A0062),
+            foregroundColor: Colors.white,
+            radius: 18,
+            child: Text((widget.user.firstName ?? '')[0] +
+                (widget.user.lastName ?? '')[0]),
+          ),
+          const SizedBox(
+            width: 10,
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -56,6 +71,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   EdgeInsets.symmetric(horizontal: 10)),
               controller: searchCtrl,
               hintText: 'Buscar producto',
+              shadowColor: MaterialStateColor.resolveWith(
+                  (states) => Color.fromARGB(94, 158, 158, 158)),
               leading: IconButton(
                 icon: const Icon(Icons.search_outlined),
                 onPressed: () async {
@@ -67,6 +84,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     query = searchCtrl.text;
                   }
                   searchCtrl.text = '';
+                  FocusScope.of(context).unfocus();
                   setState(() {});
                 },
               ),
@@ -79,13 +97,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               backgroundColor: const MaterialStatePropertyAll(Colors.white),
               textStyle:
                   const MaterialStatePropertyAll(TextStyle(color: Colors.grey)),
-              onChanged: (value) => print(value),
               onTap: () {
-                print('ontap: ${searchCtrl.text}');
+                FocusScope.of(context);
               },
             ),
           ),
-          isEmpty
+          productService.noResp
               ? Container(
                   height: 60,
                   alignment: Alignment.center,
@@ -97,12 +114,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadProducts,
-              child: ListView.builder(
-                itemCount: products?.length,
-                itemBuilder: (context, i) {
-                  return Card(product: products![i]);
-                },
-              ),
+              child: productService.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.grey,
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: products?.length,
+                      itemBuilder: (context, i) {
+                        return Card(product: products![i]);
+                      },
+                    ),
             ),
           ),
         ],

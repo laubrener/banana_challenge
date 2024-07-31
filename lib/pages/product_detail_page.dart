@@ -53,7 +53,8 @@ class _ProductPageState extends State<ProductPage>
         actions: const [
           Icon(
             Icons.shopping_cart_outlined,
-          )
+          ),
+          SizedBox(width: 10)
         ],
       ),
       body: product.images == null || product.id != id

@@ -1,6 +1,10 @@
+import 'package:banana_challenge/helpers/show_alert.dart';
+import 'package:banana_challenge/pages/home_page.dart';
+import 'package:banana_challenge/services/auth_service.dart';
 import 'package:banana_challenge/widgets/btn.dart';
 import 'package:banana_challenge/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -40,6 +44,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Column(
       children: [
         CustomInput(
@@ -55,9 +60,24 @@ class _LoginFormState extends State<LoginForm> {
         ),
         Btn(
           text: 'Ingresar',
-          onPressed: () {
-            print(
-                'usuario: ${userCtrl.text}, contraseña: ${passwordCtrl.text}');
+          onPressed:
+              // userCtrl.text == '' && passwordCtrl.text == ''
+              //     ? () {}
+              //     :
+              () async {
+            FocusScope.of(context).unfocus();
+            final loginOk = await authService.login(
+                userCtrl.text.trim(), passwordCtrl.text.trim());
+
+            if (loginOk == true) {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          HomePage(user: authService.user)));
+            } else {
+              showAlert(context, 'Login incorrect', 'Check your credentials');
+            }
           },
         )
       ],

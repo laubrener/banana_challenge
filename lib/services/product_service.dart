@@ -7,7 +7,7 @@ class ProductService with ChangeNotifier {
   bool isLoading = false;
   List<Product>? productsList = [];
   List<Product>? productsSearchList = [];
-  bool noResp = true;
+  bool noResp = false;
   Product productDetail = Product();
 
   Future<List<Product>?> getProducts() async {

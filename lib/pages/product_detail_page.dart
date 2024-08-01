@@ -16,12 +16,18 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage>
     with TickerProviderStateMixin {
   ProductService productService = ProductService();
+  PageController pageController = PageController();
+  double page = 0;
+
   int id = 0;
 
   @override
   void initState() {
     productService = Provider.of<ProductService>(context, listen: false);
     _loadProduct();
+    Provider.of<SliderModel>(context, listen: false).currentPage =
+        pageController.page ?? 0;
+    pageController.addListener(() {});
     super.initState();
   }
 
@@ -33,6 +39,7 @@ class _ProductPageState extends State<ProductPage>
 
   @override
   void dispose() {
+    pageController.dispose();
     super.dispose();
   }
 
@@ -68,7 +75,8 @@ class _ProductPageState extends State<ProductPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ProductImages(product: product),
+                    ProductImages(product: product, controller: pageController),
+                    Dots(itemCount: product.images?.length ?? 0),
                     const SizedBox(height: 30),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -169,34 +177,24 @@ class ProductImages extends StatelessWidget {
   const ProductImages({
     super.key,
     required this.product,
+    required this.controller,
   });
 
   final Product product;
 
+  final PageController controller;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
-      width: product.images!.length > 1
-          ? double.infinity
-          : MediaQuery.of(context).size.width * .5,
-      // color: Colors.red,
-      child: ListView.builder(
+      height: 300,
+      child: PageView.builder(
         scrollDirection: Axis.horizontal,
+        controller: controller,
         itemBuilder: (context, index) => Container(
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           width: 190,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  offset: const Offset(0, 5),
-                  blurRadius: 5,
-                )
-              ]),
           child: FadeInImage(
             placeholder: const AssetImage('assets/images/no-image.jpg'),
             placeholderFit: BoxFit.cover,
@@ -207,5 +205,61 @@ class ProductImages extends StatelessWidget {
         itemCount: product.images?.length,
       ),
     );
+  }
+}
+
+class Dots extends StatelessWidget {
+  final int itemCount;
+  const Dots({super.key, required this.itemCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 10,
+      // color: Colors.amberAccent,
+      alignment: Alignment.center,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: itemCount < 2 ? 0 : itemCount,
+        itemBuilder: (context, index) => Dot(index: index),
+      ),
+    );
+  }
+}
+
+class Dot extends StatelessWidget {
+  final int index;
+  const Dot({
+    super.key,
+    required this.index,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pageViewIndex = Provider.of<SliderModel>(context).currentPage;
+    final double size =
+        (pageViewIndex >= index - 0.5 && pageViewIndex < index + 0.5) ? 9 : 7.5;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: size,
+      height: size,
+      decoration:
+          const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
+    );
+  }
+}
+
+class SliderModel with ChangeNotifier {
+  double _currentPage = 0;
+
+  double get currentPage => _currentPage;
+
+  set currentPage(double page) {
+    _currentPage = page;
+    notifyListeners();
   }
 }

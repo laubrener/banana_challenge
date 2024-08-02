@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     await productService.getProducts();
     products = productService.productsList;
     query = '';
-    // isEmpty = false;
     productService.noResp = false;
     setState(() {});
   }
@@ -51,7 +50,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         centerTitle: true,
         actions: [
           CircleAvatar(
-            backgroundColor: Color(0xff7A0062),
+            backgroundColor: const Color(0xff7A0062),
             foregroundColor: Colors.white,
             radius: 18,
             child: Text((widget.user.firstName ?? '')[0] +
@@ -62,73 +61,76 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: SearchBar(
-              padding: const MaterialStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 10)),
-              controller: searchCtrl,
-              hintText: 'Buscar producto',
-              shadowColor: MaterialStateColor.resolveWith(
-                  (states) => Color.fromARGB(94, 158, 158, 158)),
-              leading: IconButton(
-                icon: const Icon(Icons.search_outlined),
-                onPressed: () async {
-                  await Provider.of<ProductService>(context, listen: false)
-                      .getProductsByQuery(searchCtrl.text);
-                  products = productService.productsSearchList;
-                  if (products!.isEmpty) {
-                    isEmpty = true;
-                    query = searchCtrl.text;
-                  }
-                  searchCtrl.text = '';
-                  FocusScope.of(context).unfocus();
-                  setState(() {});
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: SearchBar(
+                padding: const MaterialStatePropertyAll(
+                    EdgeInsets.symmetric(horizontal: 10)),
+                controller: searchCtrl,
+                hintText: 'Buscar producto',
+                shadowColor: MaterialStateColor.resolveWith(
+                    (states) => Color.fromARGB(94, 158, 158, 158)),
+                leading: IconButton(
+                  icon: const Icon(Icons.search_outlined),
+                  onPressed: () async {
+                    await Provider.of<ProductService>(context, listen: false)
+                        .getProductsByQuery(searchCtrl.text);
+                    products = productService.productsSearchList;
+                    if (products!.isEmpty) {
+                      isEmpty = true;
+                      query = searchCtrl.text;
+                    }
+                    searchCtrl.text = '';
+                    FocusScope.of(context).unfocus();
+                    setState(() {});
+                  },
+                ),
+                trailing: [
+                  IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => searchCtrl.text = '')
+                ],
+                constraints: const BoxConstraints(maxHeight: 60),
+                backgroundColor: const MaterialStatePropertyAll(Colors.white),
+                textStyle: const MaterialStatePropertyAll(
+                    TextStyle(color: Colors.grey)),
+                onTap: () {
+                  FocusScope.of(context);
                 },
               ),
-              trailing: [
-                IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => searchCtrl.text = '')
-              ],
-              constraints: const BoxConstraints(maxHeight: 60),
-              backgroundColor: const MaterialStatePropertyAll(Colors.white),
-              textStyle:
-                  const MaterialStatePropertyAll(TextStyle(color: Colors.grey)),
-              onTap: () {
-                FocusScope.of(context);
-              },
             ),
-          ),
-          productService.noResp
-              ? Container(
-                  height: 60,
-                  alignment: Alignment.center,
-                  child: Text(
-                    'No se encontraron resultados para: "$query"',
-                    style: const TextStyle(fontSize: 16),
-                  ))
-              : Container(),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: _loadProducts,
-              child: productService.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.grey,
+            productService.noResp
+                ? Container(
+                    height: 60,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'No se encontraron resultados para: "$query"',
+                      style: const TextStyle(fontSize: 16),
+                    ))
+                : Container(),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _loadProducts,
+                child: productService.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.grey,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: products?.length,
+                        itemBuilder: (context, i) {
+                          return Card(product: products![i]);
+                        },
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: products?.length,
-                      itemBuilder: (context, i) {
-                        return Card(product: products![i]);
-                      },
-                    ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

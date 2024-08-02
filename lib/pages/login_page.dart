@@ -45,42 +45,43 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    return Column(
-      children: [
-        CustomInput(
-          icon: Icons.person_2_outlined,
-          placeholder: 'Usuario',
-          textController: userCtrl,
-        ),
-        CustomInput(
-          icon: Icons.lock_outline,
-          isPassword: true,
-          placeholder: 'Contraseña',
-          textController: passwordCtrl,
-        ),
-        Btn(
-          text: 'Ingresar',
-          onPressed:
-              // userCtrl.text == '' && passwordCtrl.text == ''
-              //     ? () {}
-              //     :
-              () async {
-            FocusScope.of(context).unfocus();
-            final loginOk = await authService.login(
-                userCtrl.text.trim(), passwordCtrl.text.trim());
+    return authService.authenticating
+        ? const Center(
+            child: CircularProgressIndicator(color: Colors.grey),
+          )
+        : Column(
+            children: [
+              CustomInput(
+                icon: Icons.person_2_outlined,
+                placeholder: 'Usuario',
+                textController: userCtrl,
+              ),
+              CustomInput(
+                icon: Icons.lock_outline,
+                isPassword: true,
+                placeholder: 'Contraseña',
+                textController: passwordCtrl,
+              ),
+              Btn(
+                text: 'Ingresar',
+                onPressed: () async {
+                  FocusScope.of(context).unfocus();
+                  final loginOk = await authService.login(
+                      userCtrl.text.trim(), passwordCtrl.text.trim());
 
-            if (loginOk == true) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          HomePage(user: authService.user)));
-            } else {
-              showAlert(context, 'Login incorrect', 'Check your credentials');
-            }
-          },
-        )
-      ],
-    );
+                  if (loginOk == true) {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                HomePage(user: authService.user)));
+                  } else {
+                    showAlert(
+                        context, 'Login incorrect', 'Check your credentials');
+                  }
+                },
+              )
+            ],
+          );
   }
 }

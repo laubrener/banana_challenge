@@ -17,7 +17,6 @@ class _ProductPageState extends State<ProductPage>
     with TickerProviderStateMixin {
   ProductService productService = ProductService();
   PageController pageController = PageController();
-  double page = 0;
 
   int id = 0;
 
@@ -25,9 +24,6 @@ class _ProductPageState extends State<ProductPage>
   void initState() {
     productService = Provider.of<ProductService>(context, listen: false);
     _loadProduct();
-    Provider.of<SliderModel>(context, listen: false).currentPage =
-        pageController.page ?? 0;
-    pageController.addListener(() {});
     super.initState();
   }
 
@@ -76,7 +72,6 @@ class _ProductPageState extends State<ProductPage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     ProductImages(product: product, controller: pageController),
-                    Dots(itemCount: product.images?.length ?? 0),
                     const SizedBox(height: 30),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -118,7 +113,6 @@ class _ProductPageState extends State<ProductPage>
                     const SizedBox(height: 20),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10),
-                      // color: Colors.green,
                       alignment: Alignment.bottomLeft,
                       child: Text(
                         'USD ${product.price}',
@@ -205,61 +199,5 @@ class ProductImages extends StatelessWidget {
         itemCount: product.images?.length,
       ),
     );
-  }
-}
-
-class Dots extends StatelessWidget {
-  final int itemCount;
-  const Dots({super.key, required this.itemCount});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 10,
-      // color: Colors.amberAccent,
-      alignment: Alignment.center,
-      child: ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: itemCount < 2 ? 0 : itemCount,
-        itemBuilder: (context, index) => Dot(index: index),
-      ),
-    );
-  }
-}
-
-class Dot extends StatelessWidget {
-  final int index;
-  const Dot({
-    super.key,
-    required this.index,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final pageViewIndex = Provider.of<SliderModel>(context).currentPage;
-    final double size =
-        (pageViewIndex >= index - 0.5 && pageViewIndex < index + 0.5) ? 9 : 7.5;
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: size,
-      height: size,
-      decoration:
-          const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
-    );
-  }
-}
-
-class SliderModel with ChangeNotifier {
-  double _currentPage = 0;
-
-  double get currentPage => _currentPage;
-
-  set currentPage(double page) {
-    _currentPage = page;
-    notifyListeners();
   }
 }

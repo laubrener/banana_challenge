@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ProductService()),
         ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => SliderModel()),
       ],
       child: MaterialApp(
           title: 'Banana Challenge',

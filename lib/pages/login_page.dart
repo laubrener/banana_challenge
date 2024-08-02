@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:banana_challenge/helpers/show_alert.dart';
 import 'package:banana_challenge/pages/home_page.dart';
 import 'package:banana_challenge/services/auth_service.dart';
 import 'package:banana_challenge/widgets/btn.dart';
 import 'package:banana_challenge/widgets/custom_input.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);

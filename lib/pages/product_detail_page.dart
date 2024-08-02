@@ -1,9 +1,9 @@
-import 'package:banana_challenge/models/products_model.dart';
-import 'package:banana_challenge/services/product_service.dart';
-import 'package:banana_challenge/widgets/btn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:banana_challenge/models/products_model.dart';
+import 'package:banana_challenge/services/product_service.dart';
+import 'package:banana_challenge/widgets/btn.dart';
 
 class ProductPage extends StatefulWidget {
   final int prodId;

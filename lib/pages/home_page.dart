@@ -1,8 +1,8 @@
-import 'package:banana_challenge/models/login_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:banana_challenge/pages/product_detail_page.dart';
+import 'package:banana_challenge/models/login_model.dart';
 import 'package:banana_challenge/models/products_model.dart';
+import 'package:banana_challenge/pages/product_detail_page.dart';
 import 'package:banana_challenge/services/product_service.dart';
 
 class HomePage extends StatefulWidget {

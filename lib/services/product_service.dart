@@ -1,7 +1,7 @@
-import 'package:banana_challenge/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:banana_challenge/models/products_model.dart';
+import 'package:banana_challenge/services/auth_service.dart';
 
 class ProductService with ChangeNotifier {
   bool isLoading = false;

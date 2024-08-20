@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    productService = Provider.of<ProductService>(context, listen: false);
+    productService = context.read<ProductService>();
     _loadProducts();
 
     super.initState();
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Challenge 2024'),
+        title: const Text('Home Page'),
         centerTitle: true,
         actions: [
           CircleAvatar(
@@ -73,11 +73,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 controller: searchCtrl,
                 hintText: 'Buscar producto',
                 shadowColor: MaterialStateColor.resolveWith(
-                    (states) => Color.fromARGB(94, 158, 158, 158)),
+                    (states) => const Color.fromARGB(94, 158, 158, 158)),
                 leading: IconButton(
                   icon: const Icon(Icons.search_outlined),
                   onPressed: () async {
-                    await Provider.of<ProductService>(context, listen: false)
+                    FocusScope.of(context).unfocus();
+                    await context
+                        .read<ProductService>()
                         .getProductsByQuery(searchCtrl.text);
                     products = productService.productsSearchList;
                     if (products!.isEmpty) {
@@ -85,7 +87,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       query = searchCtrl.text;
                     }
                     searchCtrl.text = '';
-                    FocusScope.of(context).unfocus();
                     setState(() {});
                   },
                 ),

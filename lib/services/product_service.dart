@@ -4,14 +4,39 @@ import 'package:banana_challenge/models/products_model.dart';
 import 'package:banana_challenge/services/auth_service.dart';
 
 class ProductService with ChangeNotifier {
-  bool isLoading = false;
-  List<Product>? productsList = [];
-  List<Product>? productsSearchList = [];
-  bool noResp = false;
-  Product productDetail = Product();
+  List<Product>? _productsList = [];
+  List<Product>? _productsSearchList = [];
+  bool _noResp = false;
+  bool _isLoading = true;
+
+  List<Product>? get productsList => _productsList;
+  List<Product>? get productsSearchList => _productsSearchList;
+
+  bool get noResp => _noResp;
+  bool get isLoading => _isLoading;
+
+  set noResp(bool value) {
+    _noResp = value;
+    notifyListeners();
+  }
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  set productsList(List<Product>? value) {
+    _productsList = value;
+    notifyListeners();
+  }
+
+  set productsSearchList(List<Product>? value) {
+    _productsSearchList = value;
+    notifyListeners();
+  }
 
   Future<List<Product>?> getProducts() async {
-    isLoading = true;
+    // isLoading = true;
     Uri url = Uri.parse('$apiUrl/products');
     final resp = await http.get(url);
     ProductsModel products = ProductsModel.fromRawJson(resp.body);
@@ -34,6 +59,10 @@ class ProductService with ChangeNotifier {
     isLoading = false;
     return productsSearchList;
   }
+}
+
+class ProductDetailService with ChangeNotifier {
+  Product productDetail = Product();
 
   Future<Product>? getProductDetail(int id) async {
     Uri url = Uri.parse('$apiUrl/products/$id');

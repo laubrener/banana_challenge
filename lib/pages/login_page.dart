@@ -39,12 +39,37 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final userCtrl = TextEditingController();
-  final passwordCtrl = TextEditingController();
+  TextEditingController userCtrl = TextEditingController();
+  TextEditingController passwordCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    userCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    AuthService authService = context.watch<AuthService>();
+
+    void isLoginOk(loginOk) {
+      if (loginOk == true) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    HomePage(user: authService.user)));
+      } else {
+        showAlert(context, 'Login incorrect', 'Check your credentials');
+      }
+    }
+
     return authService.authenticating
         ? const Center(
             child: CircularProgressIndicator(color: Colors.grey),
@@ -66,19 +91,9 @@ class _LoginFormState extends State<LoginForm> {
                 text: 'Ingresar',
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
-                  final loginOk = await authService.login(
+                  bool loginOk = await authService.login(
                       userCtrl.text.trim(), passwordCtrl.text.trim());
-
-                  if (loginOk == true) {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                HomePage(user: authService.user)));
-                  } else {
-                    showAlert(
-                        context, 'Login incorrect', 'Check your credentials');
-                  }
+                  isLoginOk(loginOk);
                 },
               )
             ],

@@ -1,3 +1,5 @@
+import 'package:banana_challenge/models/login_model.dart';
+import 'package:banana_challenge/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:banana_challenge/pages/login_page.dart';
@@ -14,6 +16,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProductService()),
+        ChangeNotifierProvider(create: (_) => ProductDetailService()),
         ChangeNotifierProvider(create: (_) => AuthService()),
       ],
       child: MaterialApp(
@@ -22,6 +25,8 @@ class MyApp extends StatelessWidget {
           initialRoute: 'login',
           routes: {
             'login': (_) => const LoginPage(),
+            'home': (_) =>
+                HomePage(user: User(firstName: 'Laura', lastName: 'Brener')),
           },
           theme: ThemeData.light().copyWith(
             appBarTheme: const AppBarTheme(color: Color(0xff9E007E)),

@@ -15,15 +15,16 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage>
     with TickerProviderStateMixin {
-  ProductService productService = ProductService();
+  ProductDetailService productService = ProductDetailService();
   PageController pageController = PageController();
 
   int id = 0;
 
   @override
   void initState() {
-    productService = Provider.of<ProductService>(context, listen: false);
+    productService = context.read<ProductDetailService>();
     _loadProduct();
+
     super.initState();
   }
 
@@ -151,6 +152,7 @@ class RatingWidget extends StatelessWidget {
       child: RatingBar.builder(
         direction: Axis.horizontal,
         onRatingUpdate: (value) => print(value),
+        ignoreGestures: true,
         initialRating: product.rating ?? 0,
         itemCount: 5,
         itemSize: 22,
